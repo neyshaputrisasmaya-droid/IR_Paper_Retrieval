@@ -1,0 +1,138 @@
+{
+  "criteria": "Dokumen dinilai RELEVAN jika judul dan abstraknya secara langsung membahas kebutuhan informasi (information need) query, bukan sekadar memuat kata yang sama. Penilaian dilakukan terhadap seluruh 100 dokumen koleksi (judul dan abstrak dibaca), sehingga Recall@10 dapat dihitung.",
+  "queries": [
+    {
+      "id": "Q1",
+      "query": "image retrieval",
+      "boolean_query": "image AND retrieval",
+      "information_need": "Metode temu kembali (pencarian) citra berdasarkan konten atau teks.",
+      "relevant": [
+        9,
+        39
+      ]
+    },
+    {
+      "id": "Q2",
+      "query": "image segmentation and classification",
+      "boolean_query": "image AND (segmentation OR classification OR detection)",
+      "information_need": "Pengolahan dan analisis citra digital: segmentasi, klasifikasi, deteksi, ekstraksi fitur, atau rekonstruksi dari citra.",
+      "relevant": [
+        9,
+        39,
+        40,
+        41,
+        71,
+        79,
+        87,
+        93,
+        96,
+        97
+      ]
+    },
+    {
+      "id": "Q3",
+      "query": "wireless network",
+      "boolean_query": "wireless AND network",
+      "information_need": "Jaringan komunikasi nirkabel: sensor network, WLAN, handover, MIMO, OFDM, dan routing jaringan bergerak.",
+      "relevant": [
+        7,
+        18,
+        29,
+        77,
+        78,
+        81,
+        85,
+        99
+      ]
+    },
+    {
+      "id": "Q4",
+      "query": "neural network",
+      "boolean_query": "neural AND network",
+      "information_need": "Model atau penerapan jaringan saraf tiruan (artificial neural network).",
+      "relevant": [
+        41,
+        57,
+        65
+      ]
+    },
+    {
+      "id": "Q5",
+      "query": "mobile robot control",
+      "boolean_query": "robot",
+      "information_need": "Robotika: kinematika, kendali gerak, dan navigasi robot.",
+      "relevant": [
+        11,
+        19,
+        48,
+        90
+      ]
+    },
+    {
+      "id": "Q6",
+      "query": "speech recognition",
+      "boolean_query": "speech OR speaker",
+      "information_need": "Pemrosesan sinyal ucapan manusia: pengenalan ucapan, deteksi pembicara, pengenalan emosi, dan model sumber suara.",
+      "relevant": [
+        1,
+        20,
+        33,
+        35,
+        69
+      ]
+    },
+    {
+      "id": "Q7",
+      "query": "software and system testing",
+      "boolean_query": "test AND (software OR system)",
+      "information_need": "Pengujian (testing) perangkat lunak atau sistem digital, termasuk pembangkitan dan penyimpanan test case.",
+      "relevant": [
+        5,
+        47,
+        52,
+        67
+      ]
+    },
+    {
+      "id": "Q8",
+      "query": "fuzzy logic",
+      "boolean_query": "fuzzy",
+      "information_need": "Metode berbasis logika atau himpunan fuzzy.",
+      "relevant": [
+        38,
+        70,
+        91
+      ]
+    },
+    {
+      "id": "Q9",
+      "query": "resource allocation and scheduling optimization",
+      "boolean_query": "allocation OR scheduling",
+      "information_need": "Optimasi alokasi sumber daya (termasuk spektrum frekuensi dan wilayah) atau penjadwalan.",
+      "relevant": [
+        6,
+        16,
+        23,
+        42,
+        44,
+        49,
+        78
+      ]
+    },
+    {
+      "id": "Q10",
+      "query": "control system stability",
+      "boolean_query": "control AND stability",
+      "information_need": "Analisis kestabilan atau perancangan pengendali (controller) pada sistem dinamis.",
+      "relevant": [
+        14,
+        17,
+        22,
+        43,
+        63,
+        73,
+        84
+      ]
+    }
+  ]
+}

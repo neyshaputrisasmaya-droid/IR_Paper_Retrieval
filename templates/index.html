@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Paper Retrieval</title>
+    <meta name="description" content="Mesin pencari paper ilmiah dengan Boolean Retrieval dan Vector Space Model">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Langsung ke konten</a>
+
+<div class="app">
+
+<aside class="sidebar">
+    <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 36 36" aria-hidden="true">
+            <defs>
+                <linearGradient id="brandGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#4f46e5"/>
+                    <stop offset="50%" stop-color="#3b82f6"/>
+                    <stop offset="100%" stop-color="#0d9488"/>
+                </linearGradient>
+            </defs>
+            <rect width="36" height="36" rx="10" fill="url(#brandGrad)"/>
+            <path d="M11 10h10l4 4v12H11z" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
+            <circle cx="17.5" cy="18.5" r="3.2" fill="none" stroke="#fff" stroke-width="2"/>
+            <path d="m19.9 20.9 2.5 2.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div>
+            <strong>Paper Retrieval</strong>
+            <span>Boolean &amp; VSM Engine</span>
+        </div>
+    </div>
+
+    <div class="nav-label">Navigasi Utama</div>
+    <nav class="nav" role="tablist" aria-label="Menu utama" aria-orientation="vertical">
+        <button class="tab active" id="tabbtn-overview" data-tab="overview" role="tab" aria-selected="true" aria-controls="tab-overview"
+                data-title="Ringkasan" data-desc="Gambaran singkat dataset, hasil evaluasi, dan pencarian cepat.">
+            <span class="tab-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
+            </span>
+            Ringkasan
+        </button>
+        <button class="tab" id="tabbtn-search" data-tab="search" role="tab" aria-selected="false" aria-controls="tab-search" tabindex="-1"
+                data-title="Pencarian" data-desc="Cari paper berdasarkan judul dan abstrak dengan VSM atau Boolean, lalu nilai hasilnya.">
+            <span class="tab-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>
+            </span>
+            Pencarian
+        </button>
+        <button class="tab" id="tabbtn-dataset" data-tab="dataset" role="tab" aria-selected="false" aria-controls="tab-dataset" tabindex="-1"
+                data-title="Dataset &amp; Preprocessing" data-desc="Sumber data, pengaruh setiap tahap preprocessing, dan contoh dokumen sebelum dan sesudah diproses.">
+            <span class="tab-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="7.5" ry="2.75"/><path d="M4.5 6v12c0 1.5 3.4 2.75 7.5 2.75s7.5-1.25 7.5-2.75V6"/><path d="M4.5 12c0 1.5 3.4 2.75 7.5 2.75s7.5-1.25 7.5-2.75"/></svg>
+            </span>
+            Dataset &amp; Preprocessing
+        </button>
+        <button class="tab" id="tabbtn-explain" data-tab="explain" role="tab" aria-selected="false" aria-controls="tab-explain" tabindex="-1"
+                data-title="Perhitungan VSM" data-desc="Setiap angka TF, IDF, bobot TF-IDF, dan cosine similarity untuk mencocokkan hitungan manual.">
+            <span class="tab-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="3" width="15" height="18" rx="2"/><path d="M8 7h8M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/></svg>
+            </span>
+            Perhitungan VSM
+        </button>
+        <button class="tab" id="tabbtn-evaluation" data-tab="evaluation" role="tab" aria-selected="false" aria-controls="tab-evaluation" tabindex="-1"
+                data-title="Evaluasi" data-desc="Seberapa bagus hasil pencarian dibanding kunci jawaban: Precision, Recall, MAP, dan MRR.">
+            <span class="tab-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg>
+            </span>
+            Evaluasi
+        </button>
+        <button class="tab" id="tabbtn-about" data-tab="about" role="tab" aria-selected="false" aria-controls="tab-about" tabindex="-1"
+                data-title="Tentang Model" data-desc="Cara kerja Boolean Retrieval, Vector Space Model, dan preprocessing dengan bahasa sederhana.">
+            <span class="tab-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><path d="M12 7.6v.01"/></svg>
+            </span>
+            Tentang Model
+        </button>
+    </nav>
+
+    <div class="sidebar-foot">
+        <span class="sidebar-badge">Information Retrieval</span>
+        <p>UAS Sistem Temu Kembali Informasi</p>
+    </div>
+</aside>
+
+<div class="workspace">
+
+<header class="page-header">
+    <div class="header-inner">
+        <div class="header-title-row">
+            <span class="header-pill">Academic Engine</span>
+            <h1 id="page-title">Ringkasan</h1>
+        </div>
+        <p id="page-desc">Gambaran singkat dataset, hasil evaluasi, dan pencarian cepat.</p>
+    </div>
+</header>
+
+<main id="main">
+
+    <!-- ================= RINGKASAN ================= -->
+    <section id="tab-overview" role="tabpanel" aria-labelledby="tabbtn-overview">
+        <div id="overview-content">
+            <div id="overview-kpis"></div>
+
+            <div class="dash-grid">
+                <div class="dash-col">
+                <form id="quick-search" class="card card-accent-indigo quick-search" role="search">
+                    <h2>Pencarian cepat</h2>
+                    <p class="muted small">Ketik topik dalam bahasa Inggris, hasilnya dibuka di menu Pencarian.</p>
+                    <div class="search-row">
+                        <div class="search-field">
+                            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+                            <label for="quick-query" class="sr-only">Query pencarian cepat</label>
+                            <input id="quick-query" type="search" placeholder="contoh: image retrieval" autocomplete="off" required>
+                        </div>
+                        <button type="submit" class="btn btn-large">Cari</button>
+                    </div>
+                    <div class="examples" id="quick-examples">
+                        <span>Coba:</span>
+                        <button type="button" class="chip-btn" data-q="image retrieval">image retrieval</button>
+                        <button type="button" class="chip-btn" data-q="speech recognition">speech recognition</button>
+                        <button type="button" class="chip-btn" data-q="wireless network">wireless network</button>
+                    </div>
+                </form>
+
+                <div class="card card-accent-teal">
+                    <h2>Bagaimana mesin pencari ini bekerja?</h2>
+                    <ol class="flow flow-list">
+                        <li><span class="flow-num">1</span><div><b>Query dibersihkan</b><span>Huruf kecil, kata umum dibuang, kata diubah ke bentuk dasar ("retrieving" menjadi "retriev").</span></div></li>
+                        <li><span class="flow-num">2</span><div><b>Dicocokkan</b><span>Kata dasar dicari di indeks 100 paper yang dibersihkan dengan cara yang sama.</span></div></li>
+                        <li><span class="flow-num">3</span><div><b>Dinilai</b><span><b>VSM</b> memberi skor kemiripan 0–1, <b>Boolean</b> mengecek memenuhi syarat atau tidak.</span></div></li>
+                        <li><span class="flow-num">4</span><div><b>Ditampilkan</b><span>VSM urut skor tertinggi, Boolean urut nomor dokumen.</span></div></li>
+                    </ol>
+                    <div class="link-row" id="overview-links">
+                        <button type="button" class="btn-link" data-go="dataset">Lihat preprocessing →</button>
+                        <button type="button" class="btn-link" data-go="explain">Lihat perhitungan VSM →</button>
+                        <button type="button" class="btn-link" data-go="evaluation">Lihat evaluasi lengkap →</button>
+                    </div>
+                </div>
+                </div>
+                <div class="dash-col">
+                <div class="card card-accent-amber">
+                    <h2>VSM vs Boolean</h2>
+                    <div id="overview-compare"></div>
+                </div>
+
+                <div class="card card-accent-violet">
+                    <h2>Precision@5 per query uji</h2>
+                    <div id="overview-p5"></div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= PENCARIAN ================= -->
+    <section id="tab-search" role="tabpanel" aria-labelledby="tabbtn-search" hidden>
+
+        <form id="search-form" class="search-panel card card-accent-indigo" role="search">
+
+            <div class="search-row">
+                <div class="search-field">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+                    <label for="query" class="sr-only">Query pencarian</label>
+                    <input id="query" type="search" placeholder="contoh: image retrieval" autocomplete="off" required>
+                </div>
+                <button type="submit" class="btn btn-large">Search</button>
+            </div>
+
+            <div class="options">
+                <fieldset>
+                    <legend>Metode</legend>
+                    <div class="segmented">
+                        <label><input type="radio" name="method" value="vsm" checked><span>Vector Space Model</span></label>
+                        <label><input type="radio" name="method" value="boolean"><span>Boolean</span></label>
+                        <label><input type="radio" name="method" value="compare"><span>Bandingkan</span></label>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Jumlah hasil</legend>
+                    <div class="segmented">
+                        <label><input type="radio" name="top_k" value="5" checked><span>Top-5</span></label>
+                        <label><input type="radio" name="top_k" value="10"><span>Top-10</span></label>
+                    </div>
+                </fieldset>
+            </div>
+
+            <p id="method-hint" class="hint" aria-live="polite">
+                Tulis kata kunci bebas. Setiap dokumen diberi skor kemiripan, lalu diurutkan dari yang paling mirip.
+            </p>
+
+            <div class="examples" id="search-examples">
+                <span>Coba:</span>
+                <button type="button" class="chip-btn" data-q="image retrieval" data-m="vsm">image retrieval</button>
+                <button type="button" class="chip-btn" data-q="speech recognition" data-m="vsm">speech recognition</button>
+                <button type="button" class="chip-btn" data-q="wireless network" data-m="compare">wireless network · bandingkan</button>
+                <button type="button" class="chip-btn" data-q="(image OR video) AND NOT retrieval" data-m="boolean">(image OR video) AND NOT retrieval</button>
+            </div>
+        </form>
+
+        <div id="search-summary"></div>
+        <div id="live-eval"></div>
+        <div id="search-results" aria-live="polite">
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>
+                <p><b>Hasil pencarian akan tampil di sini.</b></p>
+                <p class="muted small">Ketik query di atas atau klik salah satu contoh. Pilih <b>Bandingkan</b> untuk melihat VSM dan Boolean berdampingan,
+                   lalu centang <b>Relevan</b> pada hasil untuk menghitung Precision secara langsung.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= DATASET ================= -->
+    <section id="tab-dataset" role="tabpanel" aria-labelledby="tabbtn-dataset" hidden>
+        <div id="dataset-info"></div>
+
+        <div class="card card-accent-teal">
+            <h2>Contoh Dokumen Sebelum dan Setelah Diproses</h2>
+            <label for="doc-select" class="label">Pilih dokumen</label>
+            <select id="doc-select"></select>
+            <div id="doc-steps" aria-live="polite"></div>
+        </div>
+    </section>
+
+    <!-- ================= PERHITUNGAN VSM ================= -->
+    <section id="tab-explain" role="tabpanel" aria-labelledby="tabbtn-explain" hidden>
+        <div class="card card-accent-indigo">
+            <h2>Dari Mana Skor Kemiripan Berasal?</h2>
+            <p>VSM mengubah query dan setiap dokumen menjadi deretan angka (vektor), lalu mengukur seberapa searah keduanya.
+               Halaman ini menunjukkan setiap angka yang dipakai, sehingga hasilnya bisa dicek dengan hitungan manual.</p>
+            <form id="explain-form" class="search-form">
+                <label for="explain-query" class="label">Query</label>
+                <div class="search-row">
+                    <input id="explain-query" type="search" value="image retrieval" required>
+                    <button type="submit" class="btn">Hitung</button>
+                </div>
+            </form>
+            <div class="formula">
+                <div class="formula-item formula-indigo"><b>TF</b><span>berapa kali kata muncul</span></div>
+                <div class="formula-item formula-teal"><b>IDF</b><span>ln(N / df), makin jarang makin besar</span></div>
+                <div class="formula-item formula-amber"><b>Bobot</b><span>TF × IDF</span></div>
+                <div class="formula-item formula-violet"><b>Cosine</b><span>Σ(q × d) / (|q| × |d|)</span></div>
+            </div>
+        </div>
+        <div id="explain-result" aria-live="polite"></div>
+    </section>
+
+    <!-- ================= EVALUASI ================= -->
+    <section id="tab-evaluation" role="tabpanel" aria-labelledby="tabbtn-evaluation" hidden>
+        <div class="card card-accent-amber intro">
+            <div>
+                <h2>Seberapa Bagus Hasil Pencariannya?</h2>
+                <p class="muted">Setiap query uji punya "kunci jawaban": daftar dokumen yang benar-benar relevan menurut penilai.
+                   Hasil kedua model dibandingkan dengan kunci jawaban itu.</p>
+            </div>
+            <button type="button" id="open-manage" class="btn-secondary">Kelola query uji</button>
+        </div>
+
+        <div id="evaluation-result"></div>
+
+        <details id="manage" class="card manage">
+            <summary><h2>Kelola Query Uji</h2></summary>
+            <div id="query-count"></div>
+            <button type="button" id="add-query" class="btn">+ Tambah query uji</button>
+
+            <form id="query-form" class="query-form" hidden>
+                <h3 id="query-form-title">Tambah query uji</h3>
+                <div class="form-grid">
+                    <label>Query VSM (teks bebas)
+                        <input type="text" id="qf-query" placeholder="contoh: image retrieval" required>
+                    </label>
+                    <label>Query Boolean
+                        <input type="text" id="qf-boolean" placeholder="contoh: image AND retrieval" required>
+                    </label>
+                </div>
+                <label>Kebutuhan informasi (dasar penilaian relevansi)
+                    <input type="text" id="qf-need" placeholder="contoh: Metode temu kembali citra berdasarkan konten">
+                </label>
+                <label>Document ID yang relevan (pisahkan dengan koma)
+                    <input type="text" id="qf-relevant" placeholder="contoh: 9, 39" required>
+                </label>
+                <div id="qf-preview"></div>
+
+                <div class="form-actions">
+                    <button type="button" id="qf-candidates" class="btn-secondary">Tampilkan kandidat dokumen (VSM Top-10)</button>
+                </div>
+                <div id="qf-candidate-list"></div>
+
+                <div id="qf-error"></div>
+                <div class="form-actions">
+                    <button type="submit" class="btn">Simpan</button>
+                    <button type="button" id="qf-cancel" class="btn-secondary">Batal</button>
+                </div>
+            </form>
+
+            <div id="query-table"></div>
+        </details>
+    </section>
+
+    <!-- ================= TENTANG MODEL ================= -->
+    <section id="tab-about" role="tabpanel" aria-labelledby="tabbtn-about" hidden>
+        <div class="model-grid">
+            <div class="card card-accent-amber prose">
+                <div class="model-header">
+                    <span class="model-tag model-tag-boolean">Himpunan &amp; Logika</span>
+                    <h2>Boolean Retrieval</h2>
+                </div>
+                <p class="analogy analogy-amber">Seperti <b>filter belanja online</b>: centang "merek A" DAN "ukuran M", lalu yang tampil hanya barang yang memenuhi semua syarat. Tidak ada urutan "paling cocok".</p>
+                <h3>Cara kerja</h3>
+                <p>Setiap kata dicatat muncul di dokumen mana saja (<i>inverted index</i>). Operator dijalankan sebagai operasi himpunan:</p>
+                <ul>
+                    <li><b>AND</b>: dokumen harus memuat kedua kata (irisan)</li>
+                    <li><b>OR</b>: dokumen memuat salah satu kata (gabungan)</li>
+                    <li><b>NOT</b>: dokumen tidak boleh memuat kata (komplemen)</li>
+                </ul>
+                <p class="muted small">Prioritas: kurung, NOT, AND, OR. Dua kata tanpa operator dianggap AND.</p>
+                <h3>Keterbatasan</h3>
+                <ul>
+                    <li><b>Tidak ada peringkat</b>: semua hasil dianggap sama penting.</li>
+                    <li><b>Terlalu ketat atau terlalu longgar</b>: AND sering melewatkan dokumen relevan, OR memasukkan banyak dokumen tidak relevan.</li>
+                    <li><b>Harus persis sama</b>: "picture" tidak menemukan dokumen yang memuat "image".</li>
+                    <li><b>Mengabaikan frekuensi</b>: kata yang muncul 10 kali dan 1 kali dianggap sama.</li>
+                    <li><b>Sulit bagi orang awam</b>: harus menyusun ekspresi logika dengan benar.</li>
+                </ul>
+            </div>
+
+            <div class="card card-accent-indigo prose">
+                <div class="model-header">
+                    <span class="model-tag model-tag-vsm">Pembobotan &amp; Ranking</span>
+                    <h2>Vector Space Model</h2>
+                </div>
+                <p class="analogy analogy-indigo">Seperti <b>mencocokkan resep dengan bahan di kulkas</b>: resep yang memakai paling banyak bahan khas yang Anda punya ditaruh paling atas, walaupun tidak semua bahannya ada.</p>
+                <h3>Cara kerja</h3>
+                <ul>
+                    <li>Setiap kata diberi bobot <b>TF-IDF</b>: tinggi jika sering muncul di dokumen itu (TF) tetapi jarang di dokumen lain (IDF).</li>
+                    <li>Query dan dokumen menjadi deretan bobot (vektor).</li>
+                    <li><b>Cosine similarity</b> mengukur seberapa searah kedua vektor: 1 = sangat mirip, 0 = tidak ada kata yang sama.</li>
+                </ul>
+                <h3>Ranking dan Top-k</h3>
+                <ul>
+                    <li>Skor dihitung untuk seluruh 100 dokumen, lalu diurutkan dari tertinggi.</li>
+                    <li>Pengguna memilih menampilkan 5 atau 10 teratas.</li>
+                    <li><b>Skor sama (tie-breaking)</b>: dokumen dengan Doc ID lebih kecil ditaruh lebih dulu, sehingga urutan selalu konsisten.</li>
+                </ul>
+                <h3>Kelebihan dibanding Boolean</h3>
+                <ul>
+                    <li>Hasil diurutkan dari yang paling relevan.</li>
+                    <li>Dokumen yang memuat sebagian kata query tetap ditemukan.</li>
+                    <li>Query bisa ditulis bebas tanpa operator.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card card-accent-teal prose">
+            <div class="model-header">
+                <span class="model-tag model-tag-teal">5 Tahap Standarisasi</span>
+                <h2>Text Preprocessing</h2>
+            </div>
+            <p>Dokumen dan query dibersihkan dengan langkah yang <b>sama persis</b>, agar kata di query bisa cocok dengan kata di dokumen.</p>
+            <ol>
+                <li><b>Case folding</b>: semua huruf menjadi kecil ("Image" = "image").</li>
+                <li><b>Tokenization</b>: kalimat hak cipta penerbit, tanda baca, angka dan simbol dibuang, lalu teks dipecah per kata.</li>
+                <li><b>Stopword removal</b>: kata umum (the, of, and, ...) dibuang. Kata negasi <i>no, not, nor</i> dipertahankan.</li>
+                <li><b>Stemming</b> (Porter): kata ke bentuk dasar, sehingga "retrieving", "retrieval" dan "retrieved" semuanya menjadi <code>retriev</code>.</li>
+                <li><b>Normalisasi</b>: token 1 huruf sisa simbol atau rumus (mis. dari "e.g.") dibuang.</li>
+            </ol>
+        </div>
+    </section>
+
+</main>
+
+</div>
+</div>
+
+</body>
+</html>

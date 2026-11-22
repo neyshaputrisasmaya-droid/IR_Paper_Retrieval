@@ -1,32 +1,19 @@
 
-import os
-import ast
 import re
-import pandas as pd
 from collections import defaultdict
 
-from backend.preprocessing import preprocess_query
+from backend import dataset
+from backend.preprocessing import matching_words, preprocess_query
 
 
 # ==========================================
-# 1. MEMUAT DATASET
+# 1. HIMPUNAN TERM SETIAP DOKUMEN
 # ==========================================
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-DATASET_PATH = os.path.join(
-    BASE_DIR,
-    "dataset",
-    "prepared_dataset.csv"
-)
-
-df = pd.read_csv(DATASET_PATH)
-
-documents = {}
-
-for index, row in df.iterrows():
-    tokens = ast.literal_eval(row["normalization"])
-    documents[index] = set(tokens)
+documents = {
+    doc_id: set(tokens)
+    for doc_id, tokens in dataset.documents.items()
+}
 
 
 # ==========================================
@@ -40,6 +27,8 @@ for doc_id, tokens in documents.items():
         inverted_index[term].add(doc_id)
 
 all_documents = set(documents.keys())
+
+OPERATORS = ("AND", "OR", "NOT")
 
 
 # ==========================================
@@ -70,7 +59,7 @@ def tokenize_boolean_query(query):
     for token in tokens:
         upper_token = token.upper()
 
-        if upper_token in ("AND", "OR", "NOT"):
+        if upper_token in OPERATORS:
             processed_tokens.append(upper_token)
 
         elif token in ("(", ")"):
@@ -118,8 +107,11 @@ def boolean_search(query):
 
         result = parse_not()
 
-        while position < len(tokens) and tokens[position] == "AND":
-            position += 1
+        # Dua term berdampingan tanpa operator dianggap AND
+        # ("image retrieval" sama dengan "image AND retrieval")
+        while position < len(tokens) and tokens[position] not in ("OR", ")"):
+            if tokens[position] == "AND":
+                position += 1
             right = parse_not()
             result = boolean_and(result, right)
 
@@ -171,19 +163,34 @@ def boolean_search(query):
 # 6. MENAMPILKAN HASIL PENCARIAN
 # ==========================================
 
-def display_boolean_results(result_ids):
+def boolean_query_terms(query):
+    """Term (hasil preprocessing) pada query Boolean, tanpa operator."""
+    return [
+        token for token in tokenize_boolean_query(query)
+        if token not in OPERATORS + ("(", ")")
+    ]
+
+
+def strip_operators(query):
+    """Query tanpa operator dan kurung, untuk menampilkan preprocessing-nya."""
+    return re.sub(r"\b(and|or|not)\b|[()]", " ", query, flags=re.IGNORECASE)
+
+
+def display_boolean_results(result_ids, query_terms=()):
+    """Boolean tidak memiliki skor, dokumen diurutkan berdasarkan Document ID."""
 
     results = []
 
     for doc_id in sorted(result_ids):
-        row = df.loc[doc_id]
+        matched = sorted(set(query_terms) & documents[doc_id])
+        info = dataset.document_info(doc_id)
 
         results.append({
-            "Document ID": doc_id,
-            "Title": row["title"],
-            "Year": row["year"],
-            "Venue": row["venue"],
-            "Abstract": row["abstract"]
+            **info,
+            "Matched Terms": matched,
+            "Matched Words": matching_words(
+                f"{info['Title']} {info['Abstract']}", matched
+            ),
         })
 
-    return pd.DataFrame(results)
+    return results
