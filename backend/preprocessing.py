@@ -1,3 +1,4 @@
+import os
 import re
 from functools import cache
 
@@ -6,10 +7,9 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
-# Memastikan stopwords tersedia
-nltk.download("stopwords", quiet=True)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+nltk.data.path.append(os.path.join(BASE_DIR, "nltk_data"))
 
-# Inisialisasi Porter Stemmer
 stemmer = PorterStemmer()
 
 # Mengambil stopwords bahasa Inggris
